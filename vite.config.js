@@ -27,6 +27,12 @@ export default defineConfig(({ mode }) => {
           exampleEnv.SUPABASE_PUBLISHABLE_KEY ||
           "",
       ),
+      __GOOGLE_CLIENT_ID__: JSON.stringify(
+        env.GOOGLE_CLIENT_ID ||
+          env.VITE_GOOGLE_CLIENT_ID ||
+          exampleEnv.GOOGLE_CLIENT_ID ||
+          "",
+      ),
     },
     server: {
       host: "127.0.0.1",
@@ -40,6 +46,7 @@ export default defineConfig(({ mode }) => {
           checkout: resolve(projectRoot, "checkout.html"),
           orders: resolve(projectRoot, "orders.html"),
           tracking: resolve(projectRoot, "tracking.html"),
+          profile: resolve(projectRoot, "profile.html"),
         },
       },
     },

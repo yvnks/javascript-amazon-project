@@ -1,4 +1,10 @@
-import { requireSupabase, supabaseConfigured } from "../lib/supabase.js";
+import {
+  requireSupabase,
+  supabase,
+  supabaseConfigured,
+} from "../lib/supabase.js";
+
+const googleClientId = __GOOGLE_CLIENT_ID__?.trim();
 
 function getGoogleButtonMarkup() {
   return `
@@ -30,6 +36,20 @@ export async function getCurrentUser() {
 
   const { data, error } = await requireSupabase().auth.getUser();
   return error ? null : data.user;
+}
+
+export function getDisplayName(user) {
+  const metadata = user?.user_metadata || {};
+  return (
+    [
+      metadata.full_name,
+      metadata.name,
+      metadata.given_name,
+      user?.email?.split("@")[0],
+    ]
+      .find((value) => typeof value === "string" && value.trim())
+      ?.trim() || "Account"
+  );
 }
 
 export async function logoutUser() {
@@ -92,21 +112,91 @@ export function initializeGoogleAuth({ container, onError }) {
   if (!container) return false;
 
   container.innerHTML = getGoogleButtonMarkup();
-  const button = container.querySelector(".google-signin-button");
-  button?.addEventListener("click", async () => {
-    try {
-      const { error } = await requireSupabase().auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: new URL("amazon.html", window.location.href).toString(),
-        },
-      });
+  const fallbackButton = container.querySelector(".google-signin-button");
 
-      if (error) throw error;
-    } catch (error) {
-      onError?.(error.message || "Google sign-in could not be started.");
+  if (!supabaseConfigured) {
+    fallbackButton?.addEventListener("click", () => {
+      onError?.("Configure Supabase before signing in with Google.");
+    });
+    return false;
+  }
+
+  if (!googleClientId) {
+    fallbackButton?.addEventListener("click", () => {
+      onError?.("Add GOOGLE_CLIENT_ID to .env before using Google sign-in.");
+    });
+    return false;
+  }
+
+  const googleScript = document.querySelector(
+    'script[src="https://accounts.google.com/gsi/client"]',
+  );
+  const initializeButton = async () => {
+    if (!window.google?.accounts?.id) {
+      onError?.("Google Identity Services could not be loaded.");
+      return;
     }
-  });
 
-  return supabaseConfigured;
+    const nonce = createNonce();
+    const hashedNonce = await hashNonce(nonce);
+
+    window.google.accounts.id.initialize({
+      client_id: googleClientId,
+      nonce: hashedNonce,
+      callback: async ({ credential }) => {
+        try {
+          const { error } = await requireSupabase().auth.signInWithIdToken({
+            provider: "google",
+            token: credential,
+            nonce,
+          });
+
+          if (error) throw error;
+          window.location.href = "amazon.html";
+        } catch (error) {
+          onError?.(error.message || "Google sign-in failed.");
+        }
+      },
+    });
+
+    container.replaceChildren();
+    window.google.accounts.id.renderButton(container, {
+      theme: "outline",
+      size: "large",
+      width: Math.floor(container.getBoundingClientRect().width),
+      text: "signin_with",
+      shape: "pill",
+      logo_alignment: "left",
+    });
+  };
+
+  if (window.google?.accounts?.id) {
+    initializeButton();
+  } else if (googleScript) {
+    googleScript.addEventListener("load", initializeButton, { once: true });
+    googleScript.addEventListener(
+      "error",
+      () => onError?.("Google Identity Services could not be loaded."),
+      { once: true },
+    );
+  }
+
+  return true;
+}
+
+function createNonce() {
+  return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function hashNonce(nonce) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(nonce),
+  );
+
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }

@@ -18,6 +18,7 @@ const supabaseUrl =
   process.env.VITE_SUPABASE_URL ||
   exampleEnv.SUPABASE_URL;
 const secretKey = process.env.SUPABASE_SECRET_KEY;
+const productsApiUrl = "https://supersimplebackend.dev/products";
 
 if (!supabaseUrl || !secretKey) {
   throw new Error(
@@ -25,18 +26,38 @@ if (!supabaseUrl || !secretKey) {
   );
 }
 
-const productsPath = path.join(projectRoot, "backend", "products.json");
-const productDetails = JSON.parse(await readFile(productsPath, "utf8"));
-const products = productDetails.map((product) => ({
-  id: product.id,
-  image: product.image,
-  name: product.name,
-  rating: product.rating,
-  price_cents: product.priceCents,
-  keywords: product.keywords || [],
-  type: product.type || null,
-  size_chart_link: product.sizeChartLink || null,
-}));
+async function fetchPublicProducts() {
+  const response = await fetch(productsApiUrl);
+  if (!response.ok) {
+    throw new Error(
+      `SuperSimple backend returned ${response.status} while loading products.`,
+    );
+  }
+
+  const productDetails = await response.json();
+  if (!Array.isArray(productDetails)) {
+    throw new Error("SuperSimple backend returned an invalid product list.");
+  }
+
+  return productDetails;
+}
+
+const productDetails = await fetchPublicProducts();
+if (!productDetails.length)
+  throw new Error("The product API returned no products.");
+
+const products = productDetails.map((product) => {
+  return {
+    id: String(product.id),
+    image: product.image,
+    name: product.name,
+    rating: product.rating,
+    price_cents: product.priceCents,
+    keywords: product.keywords || [],
+    type: product.type || null,
+    size_chart_link: product.sizeChartLink || null,
+  };
+});
 
 const supabase = createClient(supabaseUrl, secretKey, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -45,4 +66,6 @@ const { error } = await supabase.from("products").upsert(products);
 
 if (error) throw error;
 
-console.log(`Seeded ${products.length} products into Supabase.`);
+console.log(
+  `Fetched and seeded ${products.length} SuperSimple products into Supabase.`,
+);

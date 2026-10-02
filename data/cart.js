@@ -46,7 +46,13 @@ export async function loadCartForCurrentUser() {
     .select("product_id, quantity, delivery_option_id")
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {
+    if (error.code === "PGRST205" || error.code === "42P01") {
+      cart = storedCart;
+      return cart;
+    }
+    throw error;
+  }
 
   cart = data.length
     ? data.map((item) => ({

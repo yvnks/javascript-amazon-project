@@ -1,0 +1,90 @@
+body {
+  font-family: "Poppins", Verdana, Arial, sans-serif;
+  background: #ffffff;
+}
+
+.profile-main {
+  width: min(100% - 48px, 760px);
+  margin: 104px auto 72px;
+}
+
+.profile-eyebrow {
+  margin: 0 0 8px;
+  color: #66736b;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.profile-main h1 {
+  margin: 0;
+  color: #111111;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.profile-intro {
+  margin: 8px 0 28px;
+  color: #565959;
+  font-size: 0.95rem;
+}
+
+.profile-details {
+  margin: 0;
+  border-top: 1px solid #e1e5e2;
+}
+
+.profile-detail-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.35fr) minmax(0, 1fr);
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #e1e5e2;
+}
+
+.profile-detail-row dt {
+  color: #66736b;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.profile-detail-row dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #111111;
+  font-size: 0.95rem;
+}
+
+.profile-home-link {
+  display: inline-block;
+  margin-top: 24px;
+  color: #087443;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.profile-home-link:hover {
+  text-decoration: underline;
+}
+
+.profile-error {
+  margin: 16px 0 0;
+  color: #a61b1b;
+  font-size: 0.88rem;
+}
+
+.profile-error:empty {
+  display: none;
+}
+
+@media (max-width: 575px) {
+  .profile-main {
+    margin-top: 84px;
+  }
+
+  .profile-detail-row {
+    grid-template-columns: minmax(95px, 0.4fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+}

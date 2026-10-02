@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Your account | Soma</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/shared/general.css" />
+    <link rel="stylesheet" href="styles/shared/amazon-header.css" />
+    <link rel="stylesheet" href="styles/pages/profile.css" />
+  </head>
+  <body>
+    <div class="amazon-header">
+      <div class="amazon-header-left-section">
+        <a href="amazon.html" class="header-link">
+          <img
+            class="amazon-logo"
+            src="images/amazon-logo-white.png"
+            alt="Soma home"
+          />
+          <img
+            class="amazon-mobile-logo"
+            src="images/amazon-mobile-logo-white.png"
+            alt="Soma home"
+          />
+        </a>
+      </div>
+
+      <div class="amazon-header-middle-section">
+        <input
+          class="search-bar"
+          type="text"
+          placeholder="Search"
+          aria-label="Search products"
+        />
+        <button class="search-button" type="button" aria-label="Search">
+          <img class="search-icon" src="images/icons/search-icon.png" alt="" />
+        </button>
+      </div>
+
+      <div class="amazon-header-right-section">
+        <a class="account-link header-link" href="profile.html">
+          <span class="returns-text js-user-name">Hello, account</span>
+          <span class="orders-text">Account</span>
+        </a>
+        <a class="orders-link header-link" href="orders.html">
+          <span class="returns-text">Returns</span>
+          <span class="orders-text">&amp; Orders</span>
+        </a>
+        <a class="cart-link header-link" href="checkout.html">
+          <img class="cart-icon" src="images/icons/cart-icon.png" alt="" />
+          <div class="cart-quantity js-cart-quantity">0</div>
+          <div class="cart-text">Cart</div>
+        </a>
+      </div>
+    </div>
+
+    <main class="profile-main">
+      <p class="profile-eyebrow">ACCOUNT</p>
+      <h1>Your details</h1>
+      <p class="profile-intro">Your signed-in account information.</p>
+
+      <dl class="profile-details">
+        <div class="profile-detail-row">
+          <dt>Name</dt>
+          <dd data-profile-name>Loading...</dd>
+        </div>
+        <div class="profile-detail-row">
+          <dt>Email</dt>
+          <dd data-profile-email>Loading...</dd>
+        </div>
+        <div class="profile-detail-row">
+          <dt>Sign-in method</dt>
+          <dd data-profile-provider>Loading...</dd>
+        </div>
+        <div class="profile-detail-row">
+          <dt>Member since</dt>
+          <dd data-profile-created>Loading...</dd>
+        </div>
+      </dl>
+
+      <p class="profile-error" data-profile-error role="alert"></p>
+      <a class="profile-home-link" href="amazon.html">Continue shopping</a>
+    </main>
+
+    <script type="module" src="scripts/auth-guard.js"></script>
+    <script type="module" src="scripts/profile.js"></script>
+  </body>
+</html>

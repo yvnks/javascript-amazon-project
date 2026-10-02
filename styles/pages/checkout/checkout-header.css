@@ -105,10 +105,22 @@
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
+  display: block;
+  max-width: 155px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 1000px) {
   .checkout-header-right-section {
     width: auto;
+  }
+}
+
+@media (max-width: 575px) {
+  .checkout-account-link {
+    max-width: 95px;
+    font-size: 13px;
   }
 }

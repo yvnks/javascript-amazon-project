@@ -61,6 +61,7 @@ export class Clothing extends Product {
 }
 
 export let products = [];
+export let productsSource = "supabase";
 
 /*
 export function loadProducts(fun) {
@@ -89,30 +90,59 @@ export function loadProducts(fun) {
 }
 */
 
-export function loadProductsFromFetch() {
-  return requireSupabase()
-    .from("products")
-    .select("*")
-    .order("name")
-    .then(({ data, error }) => {
-      if (error) throw error;
+function createProducts(productDetails) {
+  return productDetails.map((product) =>
+    product.type === "clothing" ? new Clothing(product) : new Product(product),
+  );
+}
 
-      products = data.map((product) => {
-        const productDetails = {
+async function loadProductsFromPublicApi() {
+  const response = await fetch("https://supersimplebackend.dev/products");
+  if (!response.ok) {
+    throw new Error(`Product API returned HTTP ${response.status}.`);
+  }
+
+  const productDetails = await response.json();
+  if (!Array.isArray(productDetails)) {
+    throw new Error("Product API returned an invalid product list.");
+  }
+
+  products = createProducts(productDetails);
+  productsSource = "supersimple";
+  return products;
+}
+
+export async function loadProductsFromFetch() {
+  try {
+    const { data, error } = await requireSupabase()
+      .from("products")
+      .select("*")
+      .order("name");
+
+    if (error) throw error;
+
+    if (data?.length) {
+      products = createProducts(
+        data.map((product) => ({
           id: product.id,
           image: product.image,
           name: product.name,
           rating: product.rating,
           priceCents: product.price_cents,
           keywords: product.keywords,
+          type: product.type,
           sizeChartLink: product.size_chart_link,
-        };
-
-        return product.type === "clothing"
-          ? new Clothing(productDetails)
-          : new Product(productDetails);
-      });
-
+        })),
+      );
+      productsSource = "supabase";
       return products;
-    });
+    }
+  } catch (error) {
+    console.warn(
+      "Supabase catalog unavailable; using the public catalog:",
+      error.message,
+    );
+  }
+
+  return loadProductsFromPublicApi();
 }
