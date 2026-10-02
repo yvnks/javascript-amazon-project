@@ -4,6 +4,7 @@ import { PageHeading } from "@/components/PageHeading";
 import { getOrders, OrdersUnavailableError } from "@/lib/data/orders";
 import { capitalize, formatMoney, formatStoredDate } from "@/lib/format";
 import { trackingHref } from "@/lib/links";
+import { getCurrentUser } from "@/lib/supabase/server";
 import type { Order } from "@/lib/types";
 import { BuyAgainButton } from "./BuyAgainButton";
 import "../../styles/orders.css";
@@ -55,7 +56,13 @@ function OrderCard({ order }: { order: Order }) {
   );
 }
 
-export default async function OrdersPage() {
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ placed?: string; emailed?: string }>;
+}) {
+  const { placed, emailed } = await searchParams;
+  const user = placed ? await getCurrentUser() : null;
   let orders: Order[] = [];
   let problem: string | null = null;
 
@@ -71,6 +78,15 @@ export default async function OrdersPage() {
   return (
     <main className="main page-orders">
       <PageHeading title="Your orders" back={{ href: "/shop", label: "Back to shop" }} />
+
+      {placed && (
+        <p className="order-placed-banner" role="status">
+          Order placed.{" "}
+          {emailed && user?.email
+            ? `A confirmation email is on its way to ${user.email}.`
+            : "Thanks for shopping with Soma."}
+        </p>
+      )}
 
       <div className="order-container">
         {problem ? (

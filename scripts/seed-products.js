@@ -9,8 +9,9 @@ const projectRoot = path.resolve(
   "..",
 );
 dotenv.config({ path: path.join(projectRoot, ".env") });
+// .env.example is optional: settings normally come from .env.
 const exampleEnv = dotenv.parse(
-  await readFile(path.join(projectRoot, ".env.example"), "utf8"),
+  await readFile(path.join(projectRoot, ".env.example"), "utf8").catch(() => ""),
 );
 
 const supabaseUrl =

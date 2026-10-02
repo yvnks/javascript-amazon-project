@@ -4,6 +4,16 @@
     width: min(100% - 48px, 920px);
   }
 
+  .order-placed-banner {
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    color: var(--success);
+    background: #e8f5ee;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
   .order-container {
     display: flex;
     flex-direction: column;

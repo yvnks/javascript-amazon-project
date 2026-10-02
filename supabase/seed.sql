@@ -1,0 +1,57 @@
+-- Loads the store catalog (data/products.json) into public.products.
+-- Run in the Supabase SQL Editor after the store migration. Safe to re-run.
+insert into public.products (id, image, name, rating, price_cents, keywords, type, size_chart_link)
+values
+  ('e43638ce-6aa0-4b85-b27f-e1d07eb678c6', 'images/products/athletic-cotton-socks-6-pairs.jpg', 'Black and Gray Athletic Cotton Socks - 6 Pairs', '{"stars":4.5,"count":87}'::jsonb, 1090, array['socks', 'sports', 'apparel']::text[], null, null),
+  ('15b6fc6f-327a-4ec4-896f-486349e85a3d', 'images/products/intermediate-composite-basketball.jpg', 'Intermediate Size Basketball', '{"stars":4,"count":127}'::jsonb, 2095, array['sports', 'basketballs']::text[], null, null),
+  ('83d4ca15-0f35-48f5-b7a3-1ea210004f2e', 'images/products/adults-plain-cotton-tshirt-2-pack-teal.jpg', 'Adults Plain Cotton T-Shirt - 2 Pack', '{"stars":4.5,"count":56}'::jsonb, 799, array['tshirts', 'apparel', 'mens']::text[], 'clothing', 'images/clothing-size-chart.png'),
+  ('54e0eccd-8f36-462b-b68a-8182611d9add', 'images/products/black-2-slot-toaster.jpg', '2 Slot Toaster - Black', '{"stars":5,"count":2197}'::jsonb, 1899, array['toaster', 'kitchen', 'appliances']::text[], null, null),
+  ('3ebe75dc-64d2-4137-8860-1f5a963e534b', 'images/products/6-piece-white-dinner-plate-set.jpg', '6 Piece White Dinner Plate Set', '{"stars":4,"count":37}'::jsonb, 2067, array['plates', 'kitchen', 'dining']::text[], null, null),
+  ('8c9c52b5-5a19-4bcb-a5d1-158a74287c53', 'images/products/6-piece-non-stick-baking-set.webp', '6-Piece Nonstick, Carbon Steel Oven Bakeware Baking Set', '{"stars":4.5,"count":175}'::jsonb, 3499, array['kitchen', 'cookware']::text[], null, null),
+  ('dd82ca78-a18b-4e2a-9250-31e67412f98d', 'images/products/plain-hooded-fleece-sweatshirt-yellow.jpg', 'Plain Hooded Fleece Sweatshirt', '{"stars":4.5,"count":317}'::jsonb, 2400, array['hoodies', 'sweaters', 'apparel']::text[], null, null),
+  ('77919bbe-0e56-475b-adde-4f24dfed3a04', 'images/products/luxury-tower-set-6-piece.jpg', 'Luxury Towel Set - Graphite Gray', '{"stars":4.5,"count":144}'::jsonb, 3599, array['bathroom', 'washroom', 'restroom', 'towels', 'bath towels']::text[], null, null),
+  ('3fdfe8d6-9a15-4979-b459-585b0d0545b9', 'images/products/liquid-laundry-detergent-plain.jpg', 'Liquid Laundry Detergent, 110 Loads, 82.5 Fl Oz', '{"stars":4.5,"count":305}'::jsonb, 2899, array['bathroom', 'cleaning']::text[], null, null),
+  ('58b4fc92-e98c-42aa-8c55-b6b79996769a', 'images/products/knit-athletic-sneakers-gray.jpg', 'Waterproof Knit Athletic Sneakers - Gray', '{"stars":4,"count":89}'::jsonb, 3390, array['shoes', 'running shoes', 'footwear']::text[], null, null),
+  ('5968897c-4d27-4872-89f6-5bcb052746d7', 'images/products/women-chiffon-beachwear-coverup-black.jpg', 'Women''s Chiffon Beachwear Cover Up - Black', '{"stars":4.5,"count":235}'::jsonb, 2070, array['robe', 'swimsuit', 'swimming', 'bathing', 'apparel']::text[], 'clothing', 'images/clothing-size-chart.png'),
+  ('aad29d11-ea98-41ee-9285-b916638cac4a', 'images/products/round-sunglasses-black.jpg', 'Round Sunglasses', '{"stars":4.5,"count":30}'::jsonb, 1560, array['accessories', 'shades']::text[], null, null),
+  ('04701903-bc79-49c6-bc11-1af7e3651358', 'images/products/women-beach-sandals.jpg', 'Women''s Two Strap Buckle Sandals - Tan', '{"stars":4.5,"count":562}'::jsonb, 2499, array['footwear', 'sandals', 'womens', 'beach', 'summer']::text[], null, null),
+  ('901eb2ca-386d-432e-82f0-6fb1ee7bf969', 'images/products/blackout-curtain-set-beige.webp', 'Blackout Curtains Set 4-Pack - Beige', '{"stars":4.5,"count":232}'::jsonb, 4599, array['bedroom', 'curtains', 'home']::text[], null, null),
+  ('82bb68d7-ebc9-476a-989c-c78a40ee5cd9', 'images/products/men-slim-fit-summer-shorts-gray.jpg', 'Men''s Slim-Fit Summer Shorts', '{"stars":4,"count":160}'::jsonb, 1699, array['shorts', 'apparel', 'mens']::text[], null, null),
+  ('c2a82c5e-aff4-435f-9975-517cfaba2ece', 'images/products/electric-glass-and-steel-hot-water-kettle.webp', 'Electric Glass and Steel Hot Tea Water Kettle - 1.7-Liter', '{"stars":5,"count":846}'::jsonb, 3074, array['water boiler', 'appliances', 'kitchen']::text[], null, null),
+  ('6b07d4e7-f540-454e-8a1e-363f25dbae7d', 'images/products/facial-tissue-2-ply-18-boxes.jpg', 'Ultra Soft Tissue 2-Ply - 18 Box', '{"stars":4,"count":99}'::jsonb, 2374, array['kleenex', 'tissues', 'kitchen', 'tissues box', 'napkins']::text[], null, null),
+  ('a82c6bac-3067-4e68-a5ba-d827ac0be010', 'images/products/straw-sunhat.webp', 'Straw Lifeguard Sun Hat', '{"stars":4,"count":215}'::jsonb, 2200, array['hats', 'straw hats', 'summer', 'apparel']::text[], null, null),
+  ('e4f64a65-1377-42bc-89a5-e572d19252e2', 'images/products/sky-flower-stud-earrings.webp', 'Sterling Silver Sky Flower Stud Earrings', '{"stars":4.5,"count":52}'::jsonb, 1799, array['jewelry', 'accessories', 'womens']::text[], null, null),
+  ('b0f17cc5-8b40-4ca5-9142-b61fe3d98c85', 'images/products/women-stretch-popover-hoodie-black.jpg', 'Women''s Stretch Popover Hoodie', '{"stars":4.5,"count":2465}'::jsonb, 1374, array['hooded', 'hoodies', 'sweaters', 'womens', 'apparel']::text[], 'clothing', 'images/clothing-size-chart.png'),
+  ('a93a101d-79ef-4cf3-a6cf-6dbe532a1b4a', 'images/products/bathroom-rug.jpg', 'Bathroom Bath Rug Mat 20 x 31 Inch - Grey', '{"stars":4.5,"count":119}'::jsonb, 1250, array['bathmat', 'bathroom', 'home']::text[], null, null),
+  ('4f4fbcc2-4e72-45cc-935c-9e13d79cc57f', 'images/products/women-knit-ballet-flat-black.jpg', 'Women''s Knit Ballet Flat', '{"stars":4,"count":326}'::jsonb, 2640, array['shoes', 'flats', 'womens', 'footwear']::text[], null, null),
+  ('8b5a2ee1-6055-422a-a666-b34ba28b76d4', 'images/products/men-golf-polo-t-shirt-blue.jpg', 'Men''s Regular-Fit Quick-Dry Golf Polo Shirt', '{"stars":4.5,"count":2556}'::jsonb, 1599, array['tshirts', 'shirts', 'apparel', 'mens']::text[], 'clothing', 'images/clothing-size-chart.png'),
+  ('b86ddc8b-3501-4b17-9889-a3bad6fb585f', 'images/products/trash-can-with-foot-pedal-50-liter.jpg', 'Trash Can with Foot Pedal - Brushed Stainless Steel', '{"stars":4.5,"count":2286}'::jsonb, 8300, array['garbage', 'bins', 'cans', 'kitchen']::text[], null, null),
+  ('19c6a64a-5463-4d45-9af8-e41140a4100c', 'images/products/duvet-cover-set-blue-twin.jpg', 'Duvet Cover Set with Zipper Closure', '{"stars":4,"count":456}'::jsonb, 2399, array['bedroom', 'bed sheets', 'sheets', 'covers', 'home']::text[], null, null),
+  ('d2785924-743d-49b3-8f03-ec258e640503', 'images/products/women-chunky-beanie-gray.webp', 'Women''s Chunky Cable Beanie - Gray', '{"stars":5,"count":83}'::jsonb, 1250, array['hats', 'winter hats', 'beanies', 'tuques', 'apparel', 'womens']::text[], null, null),
+  ('ee1f7c56-f977-40a4-9642-12ba5072e2b0', 'images/products/men-chino-pants-beige.jpg', 'Men''s Classic-fit Pleated Chino Pants', '{"stars":4.5,"count":9017}'::jsonb, 2290, array['pants', 'apparel', 'mens']::text[], null, null),
+  ('1c079479-8586-494f-ab53-219325432536', 'images/products/men-athletic-shoes-green.jpg', 'Men''s Athletic Sneaker', '{"stars":4,"count":229}'::jsonb, 3890, array['shoes', 'running shoes', 'footwear', 'mens']::text[], null, null),
+  ('4df68c27-fd59-4a6a-bbd1-e754ddb6d53c', 'images/products/men-navigator-sunglasses-brown.jpg', 'Men''s Navigator Sunglasses Pilot', '{"stars":3.5,"count":42}'::jsonb, 1690, array['sunglasses', 'glasses', 'accessories', 'shades']::text[], null, null),
+  ('4e37dd03-3b23-4bc6-9ff8-44e112a92c64', 'images/products/non-stick-cooking-set-15-pieces.webp', 'Non-Stick Cookware Set, Pots, Pans and Utensils - 15 Pieces', '{"stars":4.5,"count":511}'::jsonb, 6797, array['cooking set', 'kitchen']::text[], null, null),
+  ('a434b69f-1bc1-482d-9ce7-cd7f4a66ce8d', 'images/products/vanity-mirror-silver.jpg', 'Vanity Mirror with Heavy Base - Chrome', '{"stars":4.5,"count":130}'::jsonb, 1649, array['bathroom', 'washroom', 'mirrors', 'home']::text[], null, null),
+  ('a45cfa0a-66d6-4dc7-9475-e2b01595f7d7', 'images/products/women-french-terry-fleece-jogger-camo.jpg', 'Women''s Fleece Jogger Sweatpant', '{"stars":4.5,"count":248}'::jsonb, 2400, array['pants', 'sweatpants', 'jogging', 'apparel', 'womens']::text[], null, null),
+  ('d339adf3-e004-4c20-a120-40e8874c66cb', 'images/products/double-elongated-twist-french-wire-earrings.webp', 'Double Oval Twist French Wire Earrings - Gold', '{"stars":4.5,"count":117}'::jsonb, 2400, array['accessories', 'womens']::text[], null, null),
+  ('d37a651a-d501-483b-aae6-a9659b0757a0', 'images/products/round-airtight-food-storage-containers.jpg', 'Round Airtight Food Storage Containers - 5 Piece', '{"stars":4,"count":126}'::jsonb, 2899, array['boxes', 'food containers', 'kitchen']::text[], null, null),
+  ('0d7f9afa-2efe-4fd9-b0fd-ba5663e0a524', 'images/products/coffeemaker-with-glass-carafe-black.jpg', 'Coffeemaker with Glass Carafe and Reusable Filter - 25 Oz, Black', '{"stars":4.5,"count":1211}'::jsonb, 2250, array['coffeemakers', 'kitchen', 'appliances']::text[], null, null),
+  ('02e3a47e-dd68-467e-9f71-8bf6f723fdae', 'images/products/blackout-curtains-black.jpg', 'Blackout Curtains Set 42 x 84-Inch - Black, 2 Panels', '{"stars":4.5,"count":363}'::jsonb, 3099, array['bedroom', 'home']::text[], null, null),
+  ('8a53b080-6d40-4a65-ab26-b24ecf700bce', 'images/products/cotton-bath-towels-teal.webp', '100% Cotton Bath Towels - 2 Pack, Light Teal', '{"stars":4.5,"count":93}'::jsonb, 2110, array['bathroom', 'home', 'towels']::text[], null, null),
+  ('10ed8504-57db-433c-b0a3-fc71a35c88a1', 'images/products/knit-athletic-sneakers-pink.webp', 'Waterproof Knit Athletic Sneakers - Pink', '{"stars":4,"count":89}'::jsonb, 3390, array['shoes', 'running shoes', 'footwear', 'womens']::text[], null, null),
+  ('77a845b1-16ed-4eac-bdf9-5b591882113d', 'images/products/countertop-blender-64-oz.jpg', 'Countertop Blender - 64oz, 1400 Watts', '{"stars":4,"count":3}'::jsonb, 10747, array['food blenders', 'kitchen', 'appliances']::text[], null, null),
+  ('36c64692-677f-4f58-b5ec-0dc2cf109e27', 'images/products/floral-mixing-bowl-set.jpg', '10-Piece Mixing Bowl Set with Lids - Floral', '{"stars":5,"count":679}'::jsonb, 3899, array['mixing bowls', 'baking', 'cookware', 'kitchen']::text[], null, null),
+  ('aaa65ef3-8d6f-4eb3-bc9b-a6ea49047d8f', 'images/products/kitchen-paper-towels-30-pack.jpg', '2-Ply Kitchen Paper Towels - 30 Pack', '{"stars":4.5,"count":1045}'::jsonb, 5799, array['kitchen', 'kitchen towels', 'tissues']::text[], null, null),
+  ('bc2847e9-5323-403f-b7cf-57fde044a955', 'images/products/men-cozy-fleece-zip-up-hoodie-red.jpg', 'Men''s Full-Zip Hooded Fleece Sweatshirt', '{"stars":4.5,"count":3157}'::jsonb, 2400, array['sweaters', 'hoodies', 'apparel', 'mens']::text[], null, null)
+on conflict (id) do update set
+  image = excluded.image,
+  name = excluded.name,
+  rating = excluded.rating,
+  price_cents = excluded.price_cents,
+  keywords = excluded.keywords,
+  type = excluded.type,
+  size_chart_link = excluded.size_chart_link;
+
+-- Should show 42.
+select count(*) as products_loaded from public.products;

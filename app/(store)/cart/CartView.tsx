@@ -9,8 +9,8 @@ import { PageHeading } from "@/components/PageHeading";
 import { MAX_QUANTITY, summarizeCart } from "@/lib/cart";
 import { deliveryOptions, getDeliveryOption } from "@/lib/delivery";
 import { addDays, formatDate, formatMoney, pluralize } from "@/lib/format";
-import { createClient } from "@/lib/supabase/client";
 import type { CartItem, Product } from "@/lib/types";
+import { placeOrder as placeOrderOnServer } from "./actions";
 
 // Delivery dates depend on today's date in the visitor's time zone, which
 // can differ from the server's, so React is told not to flag the text.
@@ -107,6 +107,8 @@ function PaymentSummary({ items, productsById }: { items: CartItem[]; productsBy
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const summary = summarizeCart(items, productsById);
+  // Checkout needs the store tables and place_order_from_cart() in Supabase.
+  const checkoutReady = cart.storage === "supabase";
 
   async function placeOrder() {
     setPlacing(true);
@@ -116,10 +118,10 @@ function PaymentSummary({ items, productsById }: { items: CartItem[]; productsBy
       // Make sure every cart change has reached Supabase first: the order
       // is built on the server from the saved cart.
       await cart.flush();
-      const { error } = await createClient().rpc("place_order_from_cart");
-      if (error) throw error;
+      const result = await placeOrderOnServer();
+      if (!result.ok) throw new Error(result.error);
       cart.clear();
-      router.push("/orders");
+      router.push(`/orders?placed=${result.orderId}${result.emailSent ? "&emailed=1" : ""}`);
       router.refresh();
     } catch (error) {
       setError((error as Error).message || "Could not place your order. Please try again.");
@@ -151,6 +153,12 @@ function PaymentSummary({ items, productsById }: { items: CartItem[]; productsBy
         <div className="payment-summary-money">{formatMoney(summary.totalCents)}</div>
       </div>
 
+      {!checkoutReady && (
+        <p className="place-order-message" role="status">
+          Checkout isn&apos;t set up yet: the store tables are missing from Supabase. Your cart is
+          saved in this browser until they&apos;re added.
+        </p>
+      )}
       {(error || cart.syncError) && (
         <p className="place-order-message" role="alert">
           {error ?? cart.syncError}
@@ -159,7 +167,7 @@ function PaymentSummary({ items, productsById }: { items: CartItem[]; productsBy
       <button
         className="place-order-button button-primary"
         type="button"
-        disabled={placing || items.length === 0}
+        disabled={placing || items.length === 0 || !checkoutReady}
         onClick={placeOrder}
       >
         {placing ? "Placing order…" : "Place your order"}

@@ -18,6 +18,8 @@ type CartStorage = "supabase" | "browser";
 
 type CartContextValue = {
   items: CartItem[];
+  /** "browser" means the cart_items table doesn't exist yet. */
+  storage: CartStorage;
   count: number;
   syncError: string | null;
   addItem: (productId: string, quantity?: number) => void;
@@ -77,8 +79,13 @@ export function CartProvider({
     queueRef.current = queueRef.current.then(async () => {
       const { error } = await write();
       if (error) {
-        const message = (error as { message?: string }).message ?? "Unknown error";
-        setSyncError(`Your cart couldn't be saved: ${message}`);
+        const { code, message } = error as { code?: string; message?: string };
+        setSyncError(
+          // cart_items.product_id must exist in the products table.
+          code === "23503"
+            ? "Your cart couldn't be saved: this product isn't in the store database yet. Load the catalog by running supabase/seed.sql in Supabase."
+            : `Your cart couldn't be saved: ${message ?? "Unknown error"}`,
+        );
         throw error;
       }
     }).catch(() => {});
@@ -136,6 +143,7 @@ export function CartProvider({
   const value = useMemo<CartContextValue>(
     () => ({
       items,
+      storage,
       count: cartRules.countItems(items),
       syncError,
       addItem: (productId, quantity = 1) =>
@@ -151,7 +159,7 @@ export function CartProvider({
       clear: () => update([]),
       flush: () => queueRef.current,
     }),
-    [items, syncError, update],
+    [items, storage, syncError, update],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -12,7 +12,8 @@ A Next.js (App Router) store backed by Supabase: sign in or register, browse and
 6. In Supabase Authentication, enable Email and Google providers. Configure the Google provider with the same OAuth client ID and its secret in Supabase. In Google Cloud, add `http://127.0.0.1:5173` and `http://localhost:5173` as authorized JavaScript origins. The app obtains a Google ID token and exchanges it with Supabase using a nonce.
 7. Under Authentication → URL Configuration, add `http://127.0.0.1:5173/auth/callback` to the Redirect URLs. Confirmation emails send new users there to finish signing up.
 8. Supabase's built-in email service only delivers to your project team's addresses and a few emails per hour. To confirm other users' sign-ups, add your own SMTP provider under Authentication → Emails.
-9. Run `npm install`, then `npm run dev` and open http://127.0.0.1:5173.
+9. To email customers an order confirmation, add your SMTP details to `.env`: `SMTP_HOST`, `SMTP_PORT` (465 or 587), `SMTP_USER`, `SMTP_PASS` and optionally `EMAIL_FROM`. For Gmail, use `smtp.gmail.com`, port 465 and a Google app password. Without these, orders are still placed and no email is sent.
+10. Run `npm install`, then `npm run dev` and open http://127.0.0.1:5173.
 
 ## Scripts
 
