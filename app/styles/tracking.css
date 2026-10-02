@@ -1,0 +1,130 @@
+/* Styles for the tracking page, scoped under .page-tracking. */
+.page-tracking {
+  & {
+    width: min(100% - 48px, 760px);
+  }
+
+  .back-to-orders-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 15px;
+  }
+
+  .tracking-card {
+    padding: 24px;
+  }
+
+  .tracking-product {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .product-image-container {
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--surface-muted);
+    border-radius: var(--radius-md);
+  }
+
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  .delivery-date {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .product-info {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .product-info.product-name {
+    margin-bottom: 4px;
+    color: var(--ink);
+    font-size: 17px;
+  }
+
+  .progress-labels-container {
+    padding: 0;
+    list-style: none;
+    margin-top: 32px;
+    margin-bottom: 12px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .progress-label.is-complete {
+    color: var(--ink-soft);
+  }
+
+  .current-status {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .progress-bar-container {
+    height: 10px;
+    background: var(--surface-muted);
+    border-radius: var(--pill);
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--ink);
+    border-radius: var(--pill);
+  }
+
+  @media (max-width: 720px) {
+    & {
+      width: min(100% - 32px, 760px);
+    }
+
+    /* The page heading has a back button on phones. */
+    .back-to-orders-link {
+      display: none;
+    }
+
+    .tracking-card {
+      padding: 16px;
+    }
+
+    .tracking-product {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .product-image-container {
+      aspect-ratio: 4 / 3;
+    }
+
+    .delivery-date {
+      font-size: 20px;
+    }
+
+    .progress-labels-container {
+      margin-top: 24px;
+      font-size: 14px;
+    }
+  }
+}
