@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -335,14 +336,8 @@ export function LoginForm({
       <GoogleSignIn />
 
       <p className="auth-legal">
-        By continuing, you agree to our{" "}
-        <a href="https://x.com/tos" target="_blank" rel="noopener noreferrer">Terms of Service</a>,{" "}
-        <a href="https://x.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>{" "}
-        and{" "}
-        <a href="https://help.x.com/rules-and-policies/twitter-cookies" target="_blank" rel="noopener noreferrer">
-          Cookie Use
-        </a>
-        .
+        By continuing, you agree to our <Link href="/legal#terms">Terms of Service</Link>,{" "}
+        <Link href="/legal#privacy">Privacy Policy</Link> and <Link href="/legal#cookies">Cookie Use</Link>.
       </p>
     </div>
   );

@@ -1,0 +1,5 @@
+# Never upload local secrets; Vercel gets settings from its own environment variables.
+.env
+.env.*
+.next
+node_modules
