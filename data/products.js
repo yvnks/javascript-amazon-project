@@ -1,4 +1,5 @@
-import { formatCurrency } from '../scripts/utils/money.js';
+import { formatCurrency } from "../scripts/utils/money.js";
+import { requireSupabase } from "../lib/supabase.js";
 
 export function getProduct(productId) {
   let matchingProduct;
@@ -12,7 +13,7 @@ export function getProduct(productId) {
   return matchingProduct;
 }
 
-class Product {
+export class Product {
   id;
   image;
   name;
@@ -38,11 +39,11 @@ class Product {
   }
 
   extraInfoHTML() {
-    return '';
+    return "";
   }
 }
 
-class Clothing extends Product {
+export class Clothing extends Product {
   sizeChartLink;
 
   constructor(productDetails) {
@@ -89,21 +90,29 @@ export function loadProducts(fun) {
 */
 
 export function loadProductsFromFetch() {
-  const promise = fetch('https://supersimplebackend.dev/products')
-    .then((response) => {
-      return response.json();
-    })
-    .then((productDetails) => {
-      products = productDetails.map((productDetails) => {
-        if (productDetails.type === 'clothing') {
-          return new Clothing(productDetails);
-        }
-        return new Product(productDetails);
-      });
-    }); /*.catch((error) => {
-      console.log('Unexpected error. Please try again later...')
-    })*/
+  return requireSupabase()
+    .from("products")
+    .select("*")
+    .order("name")
+    .then(({ data, error }) => {
+      if (error) throw error;
 
-  return promise;
+      products = data.map((product) => {
+        const productDetails = {
+          id: product.id,
+          image: product.image,
+          name: product.name,
+          rating: product.rating,
+          priceCents: product.price_cents,
+          keywords: product.keywords,
+          sizeChartLink: product.size_chart_link,
+        };
+
+        return product.type === "clothing"
+          ? new Clothing(productDetails)
+          : new Product(productDetails);
+      });
+
+      return products;
+    });
 }
-loadProductsFromFetch();

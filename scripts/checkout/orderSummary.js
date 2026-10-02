@@ -2,19 +2,19 @@ import {
   cart,
   removeItemFromCart,
   updateDeliveryOption,
-} from '../../data/cart.js';
-import { products, getProduct } from '../../data/products.js';
-import { formatCurrency } from '../utils/money.js';
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+} from "../../data/cart.js";
+import { products, getProduct } from "../../data/products.js";
+import { formatCurrency } from "../utils/money.js";
+import { addDays, formatDate } from "../utils/date.js";
 import {
   deliveryOptions,
   getDeliveryOption,
-} from '../../data/deliveryOptions.js';
-import renderPaymentSummary from './paymentSummary.js';
+} from "../../data/deliveryOptions.js";
+import renderPaymentSummary from "./paymentSummary.js";
 
 function renderOrderSummary() {
   let cartQuantity = 0;
-  let cartSummaryHTML = '';
+  let cartSummaryHTML = "";
   cart.forEach((cartItem) => {
     const productId = cartItem.productId;
 
@@ -27,9 +27,12 @@ function renderOrderSummary() {
 
     const deliveryOption = getDeliveryOption(deliveryOptionId);
 
-    const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
-    const dateString = deliveryDate.format('dddd, MMMM D');
+    const deliveryDate = addDays(new Date(), deliveryOption.deliveryDays);
+    const dateString = formatDate(deliveryDate, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
 
     cartSummaryHTML += `
     <div class="cart-item-container js-cart-item-container-${matchingProduct.id} js-cart-item-container">
@@ -70,32 +73,30 @@ function renderOrderSummary() {
         </div>
     </div>
     `;
-    document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
+    document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
   });
-  document.querySelectorAll('.js-delete-quantity-link').forEach((link) => {
-    link.addEventListener('click', (e) => {
+  document.querySelectorAll(".js-delete-quantity-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
       const { productId } = link.dataset;
       removeItemFromCart(productId);
       renderPaymentSummary();
       renderOrderSummary();
-
-      const container = document.querySelector(
-        `.js-cart-item-container-${productId}`,
-      );
-      container.remove();
     });
   });
 
   function deliveryOptionsHTML(matchingProduct, cartItem) {
-    let html = '';
+    let html = "";
     deliveryOptions.forEach((deliveryOption) => {
-      const today = dayjs();
-      const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
-      const dateString = deliveryDate.format('dddd, MMMM D');
+      const deliveryDate = addDays(new Date(), deliveryOption.deliveryDays);
+      const dateString = formatDate(deliveryDate, {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
 
       const priceString =
         deliveryOption.priceCents === 0
-          ? 'FREE'
+          ? "FREE"
           : `$${formatCurrency(deliveryOption.priceCents)} -`;
 
       const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
@@ -107,7 +108,7 @@ function renderOrderSummary() {
     >
                 <input
                 type="radio"
-                ${isChecked ? 'checked' : ''}
+                ${isChecked ? "checked" : ""}
                 class="delivery-option-input"
                 name="delivery-option-${matchingProduct.id}"
                 />
@@ -121,17 +122,16 @@ function renderOrderSummary() {
     return html;
   }
 
-  document.querySelectorAll('.js-delivery-option').forEach((element) => {
-    element.addEventListener('click', (e) => {
+  document.querySelectorAll(".js-delivery-option").forEach((element) => {
+    element.addEventListener("click", (e) => {
       const { productId, deliveryOptionId } = element.dataset;
       updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary();
       renderPaymentSummary();
     });
   });
-  document.querySelector('.js-return-to-home-link').textContent =
-    cartQuantity + ' items';
-
+  const returnHomeLink = document.querySelector(".js-return-to-home-link");
+  if (returnHomeLink) returnHomeLink.textContent = cartQuantity + " items";
 }
 
 export default renderOrderSummary;

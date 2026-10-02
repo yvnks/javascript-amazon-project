@@ -1,15 +1,21 @@
 import renderOrderSummary from "../../scripts/checkout/orderSummary.js";
 import { loadFromStorage, cart } from "../../data/cart.js";
-import { loadProductsFromFetch } from "../../data/products.js";
+import { Clothing, Product, products } from "../../data/products.js";
 
 describe("test suite: renderOrderSummary: ", () => {
   const productId1 = "e43638ce-6aa0-4b85-b27f-e1d07eb678c6";
   const productId2 = "15b6fc6f-327a-4ec4-896f-486349e85a3d";
 
-  beforeAll((done) => {
-    loadProductsFromFetch().then(() => {
-      done();
-    });
+  beforeAll(async () => {
+    const response = await fetch("/backend/products.json");
+    const productDetails = await response.json();
+    products.push(
+      ...productDetails.map((product) =>
+        product.type === "clothing"
+          ? new Clothing(product)
+          : new Product(product),
+      ),
+    );
   });
 
   beforeEach(() => {
@@ -23,8 +29,6 @@ describe("test suite: renderOrderSummary: ", () => {
 
     container.appendChild(div);
     container.appendChild(paymentSummaryDiv);
-    console.log(container);
-
     spyOn(localStorage, "getItem").and.callFake(() => {
       return JSON.stringify([
         {
@@ -72,13 +76,12 @@ describe("test suite: renderOrderSummary: ", () => {
     );
     // confirm first prod has been removed.
     expect(
-      document.querySelector(`js-cart-item-container-${productId1}`),
-    ).toEqual(null);
+      document.querySelector(`.js-cart-item-container-${productId1}`),
+    ).toBeNull();
 
-    // failed...
     expect(
-      document.querySelector(`js-cart-item-container-${productId2}`),
-    ).not.toEqual();
+      document.querySelector(`.js-cart-item-container-${productId2}`),
+    ).not.toBeNull();
 
     expect(cart.length).toEqual(1);
     expect(cart[0].productId).toEqual(productId2);

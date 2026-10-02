@@ -1,73 +1,74 @@
-import { orders } from './orders.js';
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import { loadProductsFromFetch, products } from './products.js';
+import { getOrderById } from "./orders.js";
+import { cart, loadCartForCurrentUser } from "./cart.js";
+import { formatDate } from "../scripts/utils/date.js";
 
 async function renderTrackingHTML() {
-  let html = '';
-  let matchingProduct;
-  let matchingOrder;
-  let dateString;
-
-  await loadProductsFromFetch();
-
   const url = new URL(window.location.href);
-  const orderId = url.searchParams.get('orderId');
-  const productId = url.searchParams.get('productId');
+  const orderId = url.searchParams.get("orderId");
+  const productId = url.searchParams.get("productId");
+  const trackingContainer = document.querySelector(".js-order-tracking");
 
-  orders.forEach((order) => {
-    if (orderId === order.id) {
-      matchingOrder = order;
+  try {
+    const [, order] = await Promise.all([
+      loadCartForCurrentUser(),
+      getOrderById(orderId),
+    ]);
+    const orderItem = order?.products.find(
+      (item) => item.productId === productId,
+    );
+
+    const cartQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+    document.querySelector(".js-cart-quantity").textContent = cartQuantity;
+
+    if (!order || !orderItem) {
+      trackingContainer.textContent = "We could not find that order item.";
+      return;
     }
-  });
 
-  products.forEach((product) => {
-    if (productId === product.id) {
-      matchingProduct = product;
-    }
-  });
+    const steps = ["Preparing", "Shipped", "Delivered"];
+    const currentStep = Math.max(
+      0,
+      steps.indexOf(order.status[0].toUpperCase() + order.status.slice(1)),
+    );
+    const progress = [20, 60, 100][currentStep];
+    const arrivalDate = formatDate(orderItem.estimatedDeliveryTime, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
 
-  matchingOrder.products.forEach((option) => {
-    let deliveryDate;
-    deliveryDate = option.estimatedDeliveryTime;
-    dateString = dayjs(deliveryDate).format('MMMM D');
-    console.log(dateString);
-
-     html = `
+    trackingContainer.innerHTML = `
   <a class="back-to-orders-link link-primary" href="orders.html">
           View all orders
         </a>
 
         <div class="delivery-date">
-          Arriving on Monday,
-          ${dateString}
+          Arriving on ${arrivalDate}
         </div>
 
         <div class="product-info">
-          ${matchingProduct.name}
+          ${orderItem.name}
         </div>
 
-        <div class="product-info">Quantity: ${option.quantity}</div>
+        <div class="product-info">Quantity: ${orderItem.quantity}</div>
 
         <img
           class="product-image"
-          src="${matchingProduct.image}"
+          src="${orderItem.image}"
+          alt="${orderItem.name}"
         />
 
         <div class="progress-labels-container">
-          <div class="progress-label">Preparing</div>
-          <div class="progress-label current-status">Shipped</div>
-          <div class="progress-label">Delivered</div>
+          ${steps.map((step, index) => `<div class="progress-label ${index === currentStep ? "current-status" : ""}">${step}</div>`).join("")}
         </div>
 
         <div class="progress-bar-container">
-          <div class="progress-bar"></div>
-  `;
-  });
-
-  console.log(matchingOrder);
-  console.log(matchingProduct);
-
-  document.querySelector('.js-order-tracking').innerHTML = html;
+          <div class="progress-bar" style="width: ${progress}%"></div>
+        </div>
+    `;
+  } catch (error) {
+    trackingContainer.textContent = `Could not load tracking: ${error.message}`;
+  }
 }
 
 renderTrackingHTML();

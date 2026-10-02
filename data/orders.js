@@ -1,120 +1,52 @@
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import { loadProductsFromFetch, products } from './products.js';
-import { addToCart, cart } from './cart.js';
-import { formatCurrency } from '../scripts/utils/money.js';
-import { deliveryOptions, getDeliveryOption } from './deliveryOptions.js';
+import { requireSupabase } from "../lib/supabase.js";
+import { flushCartSync } from "./cart.js";
 
-export const orders = JSON.parse(localStorage.getItem('orders')) || [];
+const ORDER_SELECT =
+  "id, total_cents, status, created_at, order_items(id, product_id, product_name, product_image, price_cents, quantity, delivery_option_id, estimated_delivery_at)";
 
-export function addOrder(order) {
-  orders.unshift(order);
-  saveToStorage();
+function normalizeOrder(row) {
+  return {
+    id: row.id,
+    orderTime: row.created_at,
+    totalCostCents: row.total_cents,
+    status: row.status,
+    products: (row.order_items || []).map((item) => ({
+      productId: item.product_id,
+      quantity: item.quantity,
+      deliveryOptionId: item.delivery_option_id,
+      estimatedDeliveryTime: item.estimated_delivery_at,
+      name: item.product_name,
+      image: item.product_image,
+      priceCents: item.price_cents,
+    })),
+  };
 }
 
-function saveToStorage() {
-  localStorage.setItem('orders', JSON.stringify(orders));
+export async function loadOrders() {
+  const { data, error } = await requireSupabase()
+    .from("orders")
+    .select(ORDER_SELECT)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data.map(normalizeOrder);
 }
 
-async function loadOrders() {
-  updateCartQuantity();
-  let orderSummaryHTML = '';
+export async function getOrderById(orderId) {
+  const { data, error } = await requireSupabase()
+    .from("orders")
+    .select(ORDER_SELECT)
+    .eq("id", orderId)
+    .maybeSingle();
 
-  await loadProductsFromFetch();
-
-  orders.forEach((order) => {
-    let matchingProduct;
-    let matchingItem;
-    let matchingOrderId;
-
-    console.log(orders);
-
-    const date = `${order.orderTime}`;
-    const dateString = dayjs(date).format('MMMM, D');
-
-    orderSummaryHTML += `
-  <div class="order-header">
-            <div class="order-header-left-section">
-              <div class="order-date">
-                <div class="order-header-label">Order Placed:</div>
-                <div>${dateString}</div>
-              </div>
-              <div class="order-total">
-                <div class="order-header-label">Total:</div>
-                <div>$${formatCurrency(order.totalCostCents)}</div>
-              </div>
-            </div>
-
-            <div class="order-header-right-section">
-              <div class="order-header-label">Order ID:</div>
-              <div>${order.id}</div>
-            </div>
-          </div>
-  `;
-
-    order.products.forEach((productItem) => {
-      matchingOrderId = productItem.productId;
-
-      products.forEach((product) => {
-        if (matchingOrderId === product.id) {
-          matchingProduct = product;
-        }
-      });
-      console.log(matchingProduct);
-
-      orderSummaryHTML += `
-      <div class="order-details-grid">
-            <div class="product-image-container">
-              <img src="${matchingProduct.image}" />
-            </div>
-
-            <div class="product-details">
-              <div class="product-name">
-                ${matchingProduct.name}
-              </div>
-              <div class="product-delivery-date">Arriving on: ${dayjs(productItem.estimatedDeliveryTime).format('MMMM D')}</div>
-              <div class="product-quantity">Quantity: ${productItem.quantity}</div>
-              <button class="buy-again-button button-primary js-buy-again-button" data-product-id=${matchingProduct.id}>
-                <img class="buy-again-icon" src="images/icons/buy-again.png" />
-                <span class="buy-again-message">Buy it again</span>
-              </button>
-            </div>
-
-            <div class="product-actions">
-              <a href="tracking.html?orderId=${order.id}&productId=${matchingProduct.id}">
-                <button class="track-package-button button-secondary 
-                js-track-package-button" data-product-id=${matchingProduct.id}>
-                  Track package
-                </button>
-              </a>
-           </div>
-      </div>
-      `;
-    });
-  });
-  document.querySelector('.js-order-container').innerHTML = orderSummaryHTML;
-
-  function updateCartQuantity() {
-    // Make cart qty icon interactive
-    let cartQty = 0;
-    cart.forEach((cartItem) => {
-      cartQty += cartItem.quantity;
-    });
-    document.querySelector('.js-cart-quantity').innerHTML = cartQty;
-  }
-
-  document.querySelectorAll('.js-buy-again-button').forEach((button) => {
-    button.addEventListener('click', () => {
-      const { productId } = button.dataset;
-      addToCart(productId);
-      updateCartQuantity();
-    });
-  });
-
-  document.querySelectorAll('.js-track-package-button').forEach((button) => {
-    button.addEventListener('click', () => {
-      const { productId } = button.dataset;
-      console.log('test');
-    });
-  });
+  if (error) throw error;
+  return data ? normalizeOrder(data) : null;
 }
-loadOrders();
+
+export async function createOrderFromCart() {
+  await flushCartSync();
+
+  const { data, error } = await requireSupabase().rpc("place_order_from_cart");
+  if (error) throw error;
+  return data;
+}

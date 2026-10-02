@@ -209,3 +209,14 @@
   margin-top: 11px;
   margin-bottom: 15px;
 }
+
+.place-order-message {
+  margin: 8px 0 0;
+  color: rgb(166, 27, 27);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.place-order-message:empty {
+  display: none;
+}

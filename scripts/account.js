@@ -4,12 +4,7 @@ import {
   loginWithEmail,
   logoutUser,
 } from "../data/auth.js";
-
-const currentUser = getCurrentUser();
-
-if (currentUser) {
-  window.location.href = "amazon.html";
-}
+import { supabaseConfigured } from "../lib/supabase.js";
 
 function showMessage(element, type, message) {
   if (!element) return;
@@ -19,6 +14,14 @@ function showMessage(element, type, message) {
 
 const loginForm = document.querySelector(".js-login-form");
 const loginMessage = document.querySelector(".js-login-message");
+
+if (!supabaseConfigured) {
+  showMessage(
+    loginMessage,
+    "error",
+    "Add SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY to .env, then restart Vite.",
+  );
+}
 
 if (loginForm) {
   const loginButton = loginForm.querySelector(".auth-button");
@@ -51,9 +54,6 @@ const googleButton = document.querySelector(".js-google-signin");
 if (googleButton) {
   initializeGoogleAuth({
     container: googleButton,
-    onSuccess: () => {
-      window.location.href = "amazon.html";
-    },
     onError: (message) => {
       showMessage(
         document.querySelector(".js-google-message"),
@@ -66,8 +66,20 @@ if (googleButton) {
 
 const logoutButton = document.querySelector(".js-logout");
 if (logoutButton) {
-  logoutButton.addEventListener("click", () => {
-    logoutUser();
-    window.location.href = "account.html";
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await logoutUser();
+      window.location.href = "account.html";
+    } catch (error) {
+      showMessage(loginMessage, "error", error.message);
+    }
   });
 }
+
+getCurrentUser()
+  .then((currentUser) => {
+    if (currentUser) window.location.href = "amazon.html";
+  })
+  .catch((error) => {
+    showMessage(loginMessage, "error", error.message);
+  });

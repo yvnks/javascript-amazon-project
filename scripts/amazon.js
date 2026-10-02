@@ -1,10 +1,10 @@
-import { cart, addToCart } from '../data/cart.js';
-import { products, loadProductsFromFetch } from '../data/products.js';
-import { formatCurrency } from './utils/money.js';
+import { cart, addToCart, loadCartForCurrentUser } from "../data/cart.js";
+import { products, loadProductsFromFetch } from "../data/products.js";
+import { formatCurrency } from "./utils/money.js";
 
 function renderProductsGrid() {
   updateCartQuantity();
-  let productsHtml = '';
+  let productsHtml = "";
 
   products.forEach((product) => {
     productsHtml += `
@@ -62,7 +62,7 @@ function renderProductsGrid() {
           </button>
         </div>
     `;
-    document.querySelector('.js-products-grid').innerHTML = productsHtml;
+    document.querySelector(".js-products-grid").innerHTML = productsHtml;
   });
 
   function updateCartQuantity() {
@@ -71,11 +71,11 @@ function renderProductsGrid() {
     cart.forEach((cartItem) => {
       cartQty += cartItem.quantity;
     });
-    document.querySelector('.js-cart-quantity').innerHTML = cartQty;
+    document.querySelector(".js-cart-quantity").innerHTML = cartQty;
   }
   // Make add to cart button responsive.
-  document.querySelectorAll('.js-add-to-cart').forEach((button) => {
-    button.addEventListener('click', () => {
+  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+    button.addEventListener("click", () => {
       const { productId } = button.dataset;
       addToCart(productId);
       updateCartQuantity();
@@ -83,6 +83,6 @@ function renderProductsGrid() {
   });
 }
 
-loadProductsFromFetch().then(() => {
+Promise.all([loadProductsFromFetch(), loadCartForCurrentUser()]).then(() => {
   renderProductsGrid();
 });
