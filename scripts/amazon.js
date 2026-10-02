@@ -1,9 +1,5 @@
 import { cart, addToCart, loadCartForCurrentUser } from "../data/cart.js";
-import {
-  products,
-  productsSource,
-  loadProductsFromFetch,
-} from "../data/products.js";
+import { products, loadProductsFromFetch } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
 function renderProductsGrid() {
@@ -89,10 +85,6 @@ function renderProductsGrid() {
 
 Promise.all([loadProductsFromFetch(), loadCartForCurrentUser()])
   .then(() => {
-    const catalogNotice = document.querySelector(".js-catalog-notice");
-    if (productsSource === "supersimple" && catalogNotice) {
-      catalogNotice.hidden = false;
-    }
     renderProductsGrid();
   })
   .catch((error) => {

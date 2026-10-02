@@ -61,7 +61,6 @@ export class Clothing extends Product {
 }
 
 export let products = [];
-export let productsSource = "supabase";
 
 /*
 export function loadProducts(fun) {
@@ -108,7 +107,6 @@ async function loadProductsFromPublicApi() {
   }
 
   products = createProducts(productDetails);
-  productsSource = "supersimple";
   return products;
 }
 
@@ -134,7 +132,6 @@ export async function loadProductsFromFetch() {
           sizeChartLink: product.size_chart_link,
         })),
       );
-      productsSource = "supabase";
       return products;
     }
   } catch (error) {

@@ -2,16 +2,6 @@
   margin-top: 60px;
 }
 
-.catalog-notice {
-  margin: 0;
-  padding: 10px 20px;
-  border-bottom: 1px solid rgb(220, 230, 223);
-  background: rgb(242, 248, 244);
-  color: rgb(47, 75, 58);
-  font-size: 13px;
-  line-height: 1.45;
-}
-
 .products-grid {
   display: grid;
 

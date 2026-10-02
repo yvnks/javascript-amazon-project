@@ -185,3 +185,5 @@ $$;
 
 revoke all on function public.place_order_from_cart() from public, anon;
 grant execute on function public.place_order_from_cart() to authenticated;
+
+notify pgrst, 'reload schema';
