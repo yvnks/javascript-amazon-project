@@ -103,6 +103,7 @@
   justify-content: end;
 }
 
+.account-link,
 .orders-link {
   color: white;
 }
@@ -143,7 +144,7 @@
   position: absolute;
   top: 4px;
   left: 22px;
-  
+
   width: 26px;
   text-align: center;
 }

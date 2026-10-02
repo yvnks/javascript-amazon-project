@@ -92,8 +92,19 @@
 }
 
 .checkout-header-right-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
   text-align: right;
-  width: 150px;
+  width: 180px;
+}
+
+.checkout-account-link {
+  color: rgb(0, 113, 133);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 @media (max-width: 1000px) {
