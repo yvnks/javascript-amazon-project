@@ -29,6 +29,17 @@ function readStoredCart(key) {
   }
 }
 
+// The cart lives in Supabase; the localStorage copies are only a cache,
+// so drop them when the user signs out of this browser.
+export function forgetStoredCarts() {
+  Object.keys(localStorage)
+    .filter((key) => key === "cart" || key.startsWith("cart:"))
+    .forEach((key) => localStorage.removeItem(key));
+
+  userId = null;
+  cart = [];
+}
+
 export async function loadCartForCurrentUser() {
   const client = requireSupabase();
   const { data: userResult, error: userError } = await client.auth.getUser();
@@ -121,7 +132,7 @@ function queueCartSync(snapshot) {
   cartSyncQueue.catch(() => {});
 }
 
-export function addToCart(productId) {
+export function addToCart(productId, quantity = 1) {
   let matchingItem;
 
   // Checks if product already exists.
@@ -132,15 +143,23 @@ export function addToCart(productId) {
   });
 
   if (matchingItem) {
-    matchingItem.quantity += 1;
+    matchingItem.quantity += quantity;
   } else {
     cart.push({
       productId,
-      quantity: 1,
+      quantity,
       deliveryOptionId: "1",
     });
   }
 
+  saveToStorage();
+}
+
+export function updateQuantity(productId, quantity) {
+  const matchingItem = cart.find((cartItem) => cartItem.productId === productId);
+  if (!matchingItem) return;
+
+  matchingItem.quantity = quantity;
   saveToStorage();
 }
 

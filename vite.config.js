@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         input: {
+          index: resolve(projectRoot, "index.html"),
           account: resolve(projectRoot, "account.html"),
           amazon: resolve(projectRoot, "amazon.html"),
           checkout: resolve(projectRoot, "checkout.html"),

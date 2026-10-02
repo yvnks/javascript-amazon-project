@@ -1,70 +1,89 @@
 <!doctype html>
-<html>
+<html lang="en" class="auth-pending">
   <head>
-    <title>Amazon Project</title>
+    <title>Shop | Soma</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-    <!-- This code is needed for responsive design to work.
-      (Responsive design = make the website look good on
-      smaller screen sizes like a phone or a tablet). -->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Load a font called Roboto from Google Fonts. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Here are the CSS files for this page. -->
     <link rel="stylesheet" href="styles/shared/general.css" />
-    <link rel="stylesheet" href="styles/shared/amazon-header.css" />
+    <link rel="stylesheet" href="styles/shared/site-header.css" />
     <link rel="stylesheet" href="styles/pages/amazon.css" />
   </head>
   <body>
-    <div class="amazon-header">
-      <div class="amazon-header-left-section">
-        <a href="amazon.html" class="header-link">
-          <img class="amazon-logo" src="images/amazon-logo-white.png" />
-          <img
-            class="amazon-mobile-logo"
-            src="images/amazon-mobile-logo-white.png"
-          />
+    <header class="site-header">
+      <a class="site-logo" href="amazon.html">Soma</a>
+
+      <form class="site-search js-search-form" action="amazon.html" role="search">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        <input class="search-bar js-search-input" type="search" name="search" placeholder="Search products" aria-label="Search products" />
+      </form>
+
+      <nav class="site-header-actions" aria-label="Account">
+        <a class="header-account" href="profile.html">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+          <span class="js-user-name">Hello, account</span>
         </a>
+        <a class="icon-button" href="orders.html" aria-label="Orders">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z" /><path d="m3 8 9 5 9-5M12 13v8" /></svg>
+        </a>
+        <a class="icon-button cart-link" href="checkout.html" aria-label="Cart">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z" /><path d="M9 8V7a3 3 0 0 1 6 0v1" /></svg>
+          <span class="cart-quantity js-cart-quantity" hidden>0</span>
+        </a>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div class="page-heading">
+        <h1 class="page-title">Shop</h1>
       </div>
 
-      <div class="amazon-header-middle-section">
-        <input class="search-bar" type="text" placeholder="Search" />
-
-        <button class="search-button">
-          <img class="search-icon" src="images/icons/search-icon.png" />
-        </button>
+      <div class="shop-toolbar">
+        <label class="chip chip-select">
+          <span class="visually-hidden">Sort by</span>
+          <select class="js-sort-select">
+            <option value="featured">Sort by</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="rating">Top rated</option>
+          </select>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </label>
+        <p class="results-count js-results-count" aria-live="polite"></p>
       </div>
 
-      <div class="amazon-header-right-section">
-        <a class="account-link header-link" href="profile.html">
-          <span class="returns-text js-user-name">Hello, account</span>
-          <span class="orders-text">Account</span>
-        </a>
-
-        <a class="orders-link header-link" href="orders.html">
-          <span class="returns-text">Returns</span>
-          <span class="orders-text">& Orders</span>
-        </a>
-
-        <a class="cart-link header-link" href="checkout.html">
-          <img class="cart-icon" src="images/icons/cart-icon.png" />
-          <div class="cart-quantity js-cart-quantity">0</div>
-          <div class="cart-text">Cart</div>
-        </a>
-      </div>
-    </div>
-
-    <div class="main">
       <div class="products-grid js-products-grid"></div>
-    </div>
+    </main>
 
-    <script type="module" src="scripts/auth-guard.js"></script>
+    <nav class="tab-bar" aria-label="Primary">
+      <a class="tab-link" href="amazon.html" aria-current="page">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z" /></svg>
+        <span>Home</span>
+      </a>
+      <a class="tab-link" href="amazon.html#search">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        <span>Search</span>
+      </a>
+      <a class="tab-cart" href="checkout.html" aria-label="Cart">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z" /><path d="M9 8V7a3 3 0 0 1 6 0v1" /></svg>
+        <span class="cart-quantity js-cart-quantity" hidden>0</span>
+      </a>
+      <a class="tab-link" href="orders.html">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z" /><path d="m3 8 9 5 9-5M12 13v8" /></svg>
+        <span>Orders</span>
+      </a>
+      <a class="tab-link" href="profile.html">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+        <span>Account</span>
+      </a>
+    </nav>
+
     <script type="module" src="/scripts/amazon.js"></script>
   </body>
 </html>

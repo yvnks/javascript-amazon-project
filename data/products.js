@@ -31,7 +31,10 @@ export class Product {
   }
 
   getStarsURL() {
-    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+    // Files are named rating-0, rating-05, rating-10 ... rating-50.
+    const tenths = Math.round(Number(this.rating.stars) * 2) * 5;
+    const suffix = tenths === 0 ? "0" : String(tenths).padStart(2, "0");
+    return `images/ratings/rating-${suffix}.png`;
   }
 
   getPrice() {

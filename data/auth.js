@@ -3,6 +3,7 @@ import {
   supabase,
   supabaseConfigured,
 } from "../lib/supabase.js";
+import { forgetStoredCarts } from "./cart.js";
 
 const googleClientId = __GOOGLE_CLIENT_ID__?.trim();
 
@@ -52,9 +53,15 @@ export function getDisplayName(user) {
   );
 }
 
+// Revokes the session token on the server and deletes it from this
+// browser. If the server can't be reached, the local token is still
+// removed so the user is signed out here either way.
 export async function logoutUser() {
-  const { error } = await requireSupabase().auth.signOut();
-  if (error) throw error;
+  const client = requireSupabase();
+  const { error } = await client.auth.signOut();
+  if (error) await client.auth.signOut({ scope: "local" });
+
+  forgetStoredCarts();
 }
 
 export async function registerWithEmail({
@@ -85,11 +92,40 @@ export async function registerWithEmail({
   const { data, error } = await requireSupabase().auth.signUp({
     email: normalizedEmail,
     password,
-    options: { data: { name: cleanedName } },
+    options: {
+      data: { name: cleanedName },
+      emailRedirectTo: getConfirmationRedirectUrl(),
+    },
   });
 
   if (error) throw error;
-  return data.user;
+
+  // Supabase answers a sign-up for an existing email with a fake user that
+  // has no identities, and sends no email, so the address can't be probed.
+  if (data.user && data.user.identities?.length === 0) {
+    throw new Error(
+      "An account with this Gmail already exists. Sign in instead, or use Sign in with Google.",
+    );
+  }
+
+  // session is null when the project requires email confirmation.
+  return { user: data.user, session: data.session };
+}
+
+// The confirmation link brings the user back to the sign-in page, which
+// picks the session up from the URL and continues to the shop.
+function getConfirmationRedirectUrl() {
+  return new URL("account.html", window.location.href).href;
+}
+
+export async function resendConfirmationEmail(email) {
+  const { error } = await requireSupabase().auth.resend({
+    type: "signup",
+    email: normalizeEmail(email),
+    options: { emailRedirectTo: getConfirmationRedirectUrl() },
+  });
+
+  if (error) throw error;
 }
 
 export async function loginWithEmail({ email, password }) {

@@ -1,81 +1,125 @@
 .main {
-  max-width: 850px;
-  margin-top: 90px;
-  margin-bottom: 100px;
-  padding-left: 30px;
-  padding-right: 30px;
-
-  /* margin-left: auto;
-     margin-right auto;
-     Is a trick for centering an element horizontally
-     without needing a container. */
-  margin-left: auto;
-  margin-right: auto;
+  width: min(100% - 48px, 760px);
 }
 
 .back-to-orders-link {
   display: inline-block;
-  margin-bottom: 30px;
+  margin-bottom: 16px;
+  font-size: 15px;
 }
 
-.delivery-date {
-  font-size: 25px;
-  font-weight: 700;
-  margin-bottom: 10px;
+.tracking-card {
+  padding: 24px;
 }
 
-.product-info {
-  margin-bottom: 3px;
+.tracking-product {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.product-image-container {
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  padding: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
 }
 
 .product-image {
-  max-width: 150px;
-  max-height: 150px;
-  margin-top: 25px;
-  margin-bottom: 50px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.delivery-date {
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.product-info {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.product-info.product-name {
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 17px;
 }
 
 .progress-labels-container {
+  margin-top: 32px;
+  margin-bottom: 12px;
+
   display: flex;
   justify-content: space-between;
-  font-size: 20px;
+
+  color: var(--muted);
+  font-size: 15px;
   font-weight: 500;
-  margin-bottom: 15px;
+}
+
+.progress-label.is-complete {
+  color: var(--ink-soft);
 }
 
 .current-status {
-  color: rgb(6, 125, 98);
-}
-
-@media (max-width: 575px) {
-  .progress-labels-container {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 450px) {
-  .progress-labels-container {
-    flex-direction: column;
-    margin-bottom: 5px;
-  }
-
-  .progress-label {
-    margin-bottom: 3px;
-  }
+  color: var(--ink);
+  font-weight: 700;
 }
 
 .progress-bar-container {
-  height: 25px;
-  width: 100%;
-
-  border: 1px solid rgb(200, 200, 200);
-  border-radius: 50px;
+  height: 10px;
+  background: var(--surface-muted);
+  border-radius: var(--pill);
   overflow: hidden;
 }
 
 .progress-bar {
   height: 100%;
-  background-color: green;
-  border-radius: 50px;
-  width: 50%;
+  background: var(--ink);
+  border-radius: var(--pill);
+}
+
+@media (max-width: 720px) {
+  .main {
+    width: min(100% - 32px, 760px);
+  }
+
+  /* The page heading has a back button on phones. */
+  .back-to-orders-link {
+    display: none;
+  }
+
+  .tracking-card {
+    padding: 16px;
+  }
+
+  .tracking-product {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .product-image-container {
+    aspect-ratio: 4 / 3;
+  }
+
+  .delivery-date {
+    font-size: 20px;
+  }
+
+  .progress-labels-container {
+    margin-top: 24px;
+    font-size: 14px;
+  }
 }

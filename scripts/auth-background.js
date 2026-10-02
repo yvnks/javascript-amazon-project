@@ -5,7 +5,6 @@ if (background) {
 }
 
 async function initializeBackground() {
-  const themeQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   try {
@@ -23,7 +22,6 @@ async function initializeBackground() {
     const uniforms = {
       uResolution: { value: new THREE.Vector2(1, 1) },
       uTime: { value: 0 },
-      uDark: { value: themeQuery.matches ? 1 : 0 },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -43,7 +41,6 @@ async function initializeBackground() {
 
         uniform vec2 uResolution;
         uniform float uTime;
-        uniform float uDark;
         varying vec2 vUv;
 
         float hash(vec2 point) {
@@ -95,20 +92,15 @@ async function initializeBackground() {
           float warm = glow(point, warmCenter, 4.2) * (0.88 + flow * 0.16) * openSide;
           float ribbon = exp(-pow(point.y - (0.12 + 0.2 * sin(point.x * 1.8 + time * 0.42)), 2.0) * 4.0) * openSide;
 
-          vec3 lightColor = vec3(0.982, 0.991, 0.986);
-          lightColor = mix(lightColor, vec3(0.58, 0.88, 0.70), clamp(mint * 0.78, 0.0, 0.78));
-          lightColor = mix(lightColor, vec3(0.6, 0.84, 0.92), clamp(aqua * 0.62, 0.0, 0.64));
-          lightColor = mix(lightColor, vec3(0.98, 0.76, 0.58), clamp(warm * 0.46, 0.0, 0.5));
-          lightColor = mix(lightColor, vec3(0.76, 0.89, 0.72), clamp(ribbon * 0.2, 0.0, 0.22));
-
-          vec3 darkColor = vec3(0.018, 0.031, 0.026);
-          darkColor = mix(darkColor, vec3(0.04, 0.3, 0.16), clamp(mint * 0.9, 0.0, 0.86));
-          darkColor = mix(darkColor, vec3(0.035, 0.19, 0.28), clamp(aqua * 0.78, 0.0, 0.72));
-          darkColor = mix(darkColor, vec3(0.3, 0.15, 0.075), clamp(warm * 0.56, 0.0, 0.5));
-          darkColor = mix(darkColor, vec3(0.035, 0.22, 0.13), clamp(ribbon * 0.28, 0.0, 0.3));
+          // Neutral palette matching the shop: the page grey (#efefef),
+          // white highlights, a cool grey, a soft stone and a faint ink ribbon.
+          vec3 color = vec3(0.937, 0.937, 0.937);
+          color = mix(color, vec3(0.995, 0.995, 0.995), clamp(mint * 0.85, 0.0, 0.85));
+          color = mix(color, vec3(0.85, 0.865, 0.885), clamp(aqua * 0.7, 0.0, 0.7));
+          color = mix(color, vec3(0.91, 0.865, 0.81), clamp(warm * 0.6, 0.0, 0.6));
+          color = mix(color, vec3(0.80, 0.80, 0.80), clamp(ribbon * 0.2, 0.0, 0.2));
 
           float texture = (noise(point * 4.0 + vec2(time * 0.06)) - 0.5) * 0.012;
-          vec3 color = mix(lightColor, darkColor, uDark);
           color += vec3(texture);
 
           gl_FragColor = vec4(color, 1.0);
@@ -118,7 +110,7 @@ async function initializeBackground() {
 
     scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
     camera.position.z = 1;
-    renderer.setClearColor(themeQuery.matches ? 0x07110d : 0xf8fbf9, 1);
+    renderer.setClearColor(0xefefef, 1);
     renderer.domElement.setAttribute("aria-hidden", "true");
     background.replaceChildren(renderer.domElement);
 
@@ -162,17 +154,11 @@ async function initializeBackground() {
       }
     }
 
-    function updateTheme() {
-      uniforms.uDark.value = themeQuery.matches ? 1 : 0;
-      renderer.setClearColor(themeQuery.matches ? 0x07110d : 0xf8fbf9, 1);
-      draw(performance.now());
-    }
 
     resize();
     start();
     window.addEventListener("resize", resize, { passive: true });
     document.addEventListener("visibilitychange", start);
-    themeQuery.addEventListener("change", updateTheme);
     motionQuery.addEventListener("change", start);
   } catch {
     background.classList.add("auth-background--fallback");
